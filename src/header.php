@@ -32,29 +32,27 @@
 <body>
 	<header>
 		<div class="container">
-		  	<div class="page-header" id="banner">
+		  <div class="page-header" id="banner">
 				<h1><a href="<?php bloginfo('url') ?>"><?php bloginfo('name') ?></a></h1>
 				<p class="lead" style="margin-bottom: 10px;"><?php bloginfo('description') ?></p>
+				<div class="social-follow-buttons">
+					<iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Ftime2hack&amp;width&amp;layout=button&amp;action=like&amp;show_faces=false&amp;share=true&amp;height=35&amp;appId=110939712330571" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:20px;width:93px;margin:0 2px;" allowTransparency="true"></iframe>
+					<iframe 
+						src="//platform.twitter.com/widgets/follow_button.html?screen_name=time2hack&show_count=false&show_screen_name=true"
+						style="width: 130px; height: 20px;margin:0 2px;"
+						allowtransparency="true"
+						frameborder="0"
+						scrolling="no">
+					</iframe><!-- Place this tag where you want the widget to render. -->
+					<div class="g-follow" data-annotation="none" data-height="20" data-href="https://plus.google.com/107779735362438516065" data-rel="publisher"></div>
+				</div>
 			</div>
-			<div><center><iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Ftime2hack&amp;width&amp;layout=button&amp;action=like&amp;show_faces=false&amp;share=true&amp;height=35&amp;appId=110939712330571" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:20px;width:93px;margin:0 2px;" allowTransparency="true"></iframe><iframe
-  src="//platform.twitter.com/widgets/follow_button.html?screen_name=time2hack&show_count=false&show_screen_name=true"
-  style="width: 130px; height: 20px;margin:0 2px;"
-  allowtransparency="true"
-  frameborder="0"
-  scrolling="no">
-</iframe><!-- Place this tag where you want the widget to render. -->
-<div class="g-follow" data-annotation="none" data-height="20" data-href="https://plus.google.com/107779735362438516065" data-rel="publisher"></div></center></div>
 		</div>
 	</header>
 		<!-- Navbar
 		================================================== -->
 <nav>
 	<div id="access">
-		<?php 
-		/*	Allow screen readers / text browsers to skip the navigation menu and
-			get right to the good stuff. */ 
-		?>
-		
 		<div class="skip-link screen-reader-text">
 			<a href="#content" title="<?php esc_attr_e( 'Skip to content', 't2h' ); ?>">
 			<?php _e( 'Skip to content', 't2h' ); ?></a>
@@ -78,9 +76,9 @@
 						used. */
 						$defaults = array(
 							'container'       => 'div',
-							'container_class' => 'clearfix text-center',
+							'container_class' => 'clearfix',
 							'container_id'    => '',
-							'menu_class'      => 'main-nav nav navbar-nav clearfix text-center',
+							'menu_class'      => 'main-nav nav navbar-nav clearfix',
 							'menu_id'         => 'main-nav',
 							'echo'            => true,
 							'fallback_cb'     => 'wp_page_menu',
