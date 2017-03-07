@@ -56,7 +56,7 @@
 		?>
 		
 		<div class="skip-link screen-reader-text">
-			<a href="#content" title="<?php esc_attr_e( 'Skip to content', 'twentyten' ); ?>">
+			<a href="#content" title="<?php esc_attr_e( 'Skip to content', 't2h' ); ?>">
 			<?php _e( 'Skip to content', 't2h' ); ?></a>
 		</div>
 		
