@@ -5,8 +5,8 @@
  * If no active widgets in this sidebar, hide it completely.
  *
  * @package WordPress
- * @subpackage Twenty_Thirteen
- * @since Twenty Thirteen 1.0
+ * @subpackage Time_to_Hack
+ * @since Time to Hack 1.0
  */
 
 if ( is_active_sidebar( 'sidebar-1' ) ) : ?>

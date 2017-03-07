@@ -7,8 +7,8 @@
  * 'pages' on your WordPress site will use a different template.
  *
  * @package WordPress
- * @subpackage Twenty_Thirteen
- * @since Twenty Thirteen 1.0
+ * @subpackage Time_to_Hack
+ * @since Time to Hack 1.0
  */
 
 get_header(); ?>
@@ -120,7 +120,7 @@ get_header(); ?>
         </div><!-- .entry-content -->
 
           <footer class="entry-meta">
-            <?php //edit_post_link( __( 'Edit', 'twentythirteen' ), '<span class="edit-link">', '</span>' ); echo '<!-- Hello -->';?>
+            <?php //edit_post_link( __( 'Edit', 't2h' ), '<span class="edit-link">', '</span>' ); echo '<!-- Hello -->';?>
           </footer><!-- .entry-meta -->
         </article><!-- #post -->
 

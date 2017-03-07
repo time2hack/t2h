@@ -11,7 +11,7 @@ function t2h_post_nav(){
 		return;
 	?>
 	<nav class="navigation post-navigation" role="navigation">
-		<h1 class="screen-reader-text"><?php _e( 'Post navigation', 'twentythirteen' ); ?></h1>
+		<h1 class="screen-reader-text"><?php _e( 'Post navigation', 't2h' ); ?></h1>
 		<ul  class="nav-links default-wp-page pager clearfix">
 			<li class="previous">
 				<?php previous_post_link( '%link', _x( '<span title="%title"><i class="fa fa-chevron-left"></i>  Previous Post</span>', 'Previous post', 't2h' ) ); ?>
@@ -175,9 +175,313 @@ function t2h_wp_title( $title, $sep ) {
 		$title = "$title $sep $site_description";
 
 	// Add a page number if necessary.
-	if ( $paged >= 2 || $page >= 2 )
+	if ( ( $paged >= 2 || $page >= 2 ) && ! is_404() )
 		$title = "$title $sep " . sprintf( __( 'Page %s', 't2h' ), max( $paged, $page ) );
 
 	return $title;
 }
 add_filter( 'wp_title', 't2h_wp_title', 10, 2 );
+/*
+ * Set up the content width value based on the theme's design.
+ *
+ * @see t2h_content_width() for template-specific adjustments.
+ */
+if ( ! isset( $content_width ) )
+	$content_width = 604;
+
+if ( ! function_exists( 't2h_paging_nav' ) ) :
+/**
+ * Display navigation to next/previous set of posts when applicable.
+ *
+ * @since Time to Hack 1.0
+ */
+function t2h_paging_nav() {
+	global $wp_query;
+
+	// Don't print empty markup if there's only one page.
+	if ( $wp_query->max_num_pages < 2 )
+		return;
+	?>
+	<nav class="navigation paging-navigation" role="navigation">
+		<h1 class="screen-reader-text"><?php _e( 'Posts navigation', 't2h' ); ?></h1>
+		<div class="nav-links">
+
+			<?php if ( get_next_posts_link() ) : ?>
+			<div class="nav-previous"><?php next_posts_link( __( '<span class="meta-nav">&larr;</span> Older posts', 't2h' ) ); ?></div>
+			<?php endif; ?>
+
+			<?php if ( get_previous_posts_link() ) : ?>
+			<div class="nav-next"><?php previous_posts_link( __( 'Newer posts <span class="meta-nav">&rarr;</span>', 't2h' ) ); ?></div>
+			<?php endif; ?>
+
+		</div><!-- .nav-links -->
+	</nav><!-- .navigation -->
+	<?php
+}
+endif;
+
+if ( ! function_exists( 't2h_entry_meta' ) ) :
+/**
+ * Print HTML with meta information for current post: categories, tags, permalink, author, and date.
+ *
+ * Create your own t2h_entry_meta() to override in a child theme.
+ *
+ * @since Time to Hack 1.0
+ */
+function t2h_entry_meta() {
+	if ( is_sticky() && is_home() && ! is_paged() )
+		echo '<span class="featured-post">' . esc_html__( 'Sticky', 't2h' ) . '</span>';
+
+	if ( ! has_post_format( 'link' ) && 'post' == get_post_type() )
+		t2h_entry_date();
+
+	// Translators: used between list items, there is a space after the comma.
+	$categories_list = get_the_category_list( __( ', ', 't2h' ) );
+	if ( $categories_list ) {
+		echo '<span class="categories-links">' . $categories_list . '</span>';
+	}
+
+	// Translators: used between list items, there is a space after the comma.
+	$tag_list = get_the_tag_list( '', __( ', ', 't2h' ) );
+	if ( $tag_list ) {
+		echo '<span class="tags-links">' . $tag_list . '</span>';
+	}
+
+	// Post author
+	if ( 'post' == get_post_type() ) {
+		printf( '<span class="author vcard"><a class="url fn n" href="%1$s" title="%2$s" rel="author">%3$s</a></span>',
+			esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ),
+			esc_attr( sprintf( __( 'View all posts by %s', 't2h' ), get_the_author() ) ),
+			get_the_author()
+		);
+	}
+}
+endif;
+
+if ( ! function_exists( 't2h_entry_date' ) ) :
+/**
+ * Print HTML with date information for current post.
+ *
+ * Create your own t2h_entry_date() to override in a child theme.
+ *
+ * @since Time to Hack 1.0
+ *
+ * @param boolean $echo (optional) Whether to echo the date. Default true.
+ * @return string The HTML-formatted post date.
+ */
+function t2h_entry_date( $echo = true ) {
+	if ( has_post_format( array( 'chat', 'status' ) ) )
+		$format_prefix = _x( '%1$s on %2$s', '1: post format name. 2: date', 't2h' );
+	else
+		$format_prefix = '%2$s';
+
+	$date = sprintf( '<span class="date"><a href="%1$s" title="%2$s" rel="bookmark"><time class="entry-date" datetime="%3$s">%4$s</time></a></span>',
+		esc_url( get_permalink() ),
+		esc_attr( sprintf( __( 'Permalink to %s', 't2h' ), the_title_attribute( 'echo=0' ) ) ),
+		esc_attr( get_the_date( 'c' ) ),
+		esc_html( sprintf( $format_prefix, get_post_format_string( get_post_format() ), get_the_date() ) )
+	);
+
+	if ( $echo )
+		echo $date;
+
+	return $date;
+}
+endif;
+
+if ( ! function_exists( 't2h_the_attached_image' ) ) :
+/**
+ * Print the attached image with a link to the next attached image.
+ *
+ * @since Time to Hack 1.0
+ */
+function t2h_the_attached_image() {
+	/**
+	 * Filter the image attachment size to use.
+	 *
+	 * @since Time to Hack 1.0
+	 *
+	 * @param array $size {
+	 *     @type int The attachment height in pixels.
+	 *     @type int The attachment width in pixels.
+	 * }
+	 */
+	$attachment_size     = apply_filters( 't2h_attachment_size', array( 724, 724 ) );
+	$next_attachment_url = wp_get_attachment_url();
+	$post                = get_post();
+
+	/*
+	 * Grab the IDs of all the image attachments in a gallery so we can get the URL
+	 * of the next adjacent image in a gallery, or the first image (if we're
+	 * looking at the last image in a gallery), or, in a gallery of one, just the
+	 * link to that image file.
+	 */
+	$attachment_ids = get_posts( array(
+		'post_parent'    => $post->post_parent,
+		'fields'         => 'ids',
+		'numberposts'    => -1,
+		'post_status'    => 'inherit',
+		'post_type'      => 'attachment',
+		'post_mime_type' => 'image',
+		'order'          => 'ASC',
+		'orderby'        => 'menu_order ID',
+	) );
+
+	// If there is more than 1 attachment in a gallery...
+	if ( count( $attachment_ids ) > 1 ) {
+		foreach ( $attachment_ids as $idx => $attachment_id ) {
+			if ( $attachment_id == $post->ID ) {
+				$next_id = $attachment_ids[ ( $idx + 1 ) % count( $attachment_ids ) ];
+				break;
+			}
+		}
+
+		// get the URL of the next image attachment...
+		if ( $next_id )
+			$next_attachment_url = get_attachment_link( $next_id );
+
+		// or get the URL of the first image attachment.
+		else
+			$next_attachment_url = get_attachment_link( reset( $attachment_ids ) );
+	}
+
+	printf( '<a href="%1$s" title="%2$s" rel="attachment">%3$s</a>',
+		esc_url( $next_attachment_url ),
+		the_title_attribute( array( 'echo' => false ) ),
+		wp_get_attachment_image( $post->ID, $attachment_size )
+	);
+}
+endif;
+
+/**
+ * Return the post URL.
+ *
+ * @uses get_url_in_content() to get the URL in the post meta (if it exists) or
+ * the first link found in the post content.
+ *
+ * Falls back to the post permalink if no URL is found in the post.
+ *
+ * @since Time to Hack 1.0
+ *
+ * @return string The Link format URL.
+ */
+function t2h_get_link_url() {
+	$content = get_the_content();
+	$has_url = get_url_in_content( $content );
+
+	return ( $has_url ) ? $has_url : apply_filters( 'the_permalink', get_permalink() );
+}
+
+if ( ! function_exists( 't2h_excerpt_more' ) && ! is_admin() ) :
+/**
+ * Replaces "[...]" (appended to automatically generated excerpts) with ...
+ * and a Continue reading link.
+ *
+ * @since Time to Hack 1.4
+ *
+ * @param string $more Default Read More excerpt link.
+ * @return string Filtered Read More excerpt link.
+ */
+function t2h_excerpt_more( $more ) {
+	$link = sprintf( '<a href="%1$s" class="more-link">%2$s</a>',
+		esc_url( get_permalink( get_the_ID() ) ),
+			/* translators: %s: Name of current post */
+			sprintf( __( 'Continue reading %s <span class="meta-nav">&rarr;</span>', 't2h' ), '<span class="screen-reader-text">' . get_the_title( get_the_ID() ) . '</span>' )
+		);
+	return ' &hellip; ' . $link;
+}
+add_filter( 'excerpt_more', 't2h_excerpt_more' );
+endif;
+
+/**
+ * Extend the default WordPress body classes.
+ *
+ * Adds body classes to denote:
+ * 1. Single or multiple authors.
+ * 2. Active widgets in the sidebar to change the layout and spacing.
+ * 3. When avatars are disabled in discussion settings.
+ *
+ * @since Time to Hack 1.0
+ *
+ * @param array $classes A list of existing body class values.
+ * @return array The filtered body class list.
+ */
+function t2h_body_class( $classes ) {
+	if ( ! is_multi_author() )
+		$classes[] = 'single-author';
+
+	if ( is_active_sidebar( 'sidebar-2' ) && ! is_attachment() && ! is_404() )
+		$classes[] = 'sidebar';
+
+	if ( ! get_option( 'show_avatars' ) )
+		$classes[] = 'no-avatars';
+
+	return $classes;
+}
+add_filter( 'body_class', 't2h_body_class' );
+
+/**
+ * Adjust content_width value for video post formats and attachment templates.
+ *
+ * @since Time to Hack 1.0
+ */
+function t2h_content_width() {
+	global $content_width;
+
+	if ( is_attachment() )
+		$content_width = 724;
+	elseif ( has_post_format( 'audio' ) )
+		$content_width = 484;
+}
+add_action( 'template_redirect', 't2h_content_width' );
+
+/**
+ * Add postMessage support for site title and description for the Customizer.
+ *
+ * @since Time to Hack 1.0
+ *
+ * @param WP_Customize_Manager $wp_customize Customizer object.
+ */
+function t2h_customize_register( $wp_customize ) {
+	$wp_customize->get_setting( 'blogname' )->transport         = 'postMessage';
+	$wp_customize->get_setting( 'blogdescription' )->transport  = 'postMessage';
+	$wp_customize->get_setting( 'header_textcolor' )->transport = 'postMessage';
+
+	if ( isset( $wp_customize->selective_refresh ) ) {
+		$wp_customize->selective_refresh->add_partial( 'blogname', array(
+			'selector' => '.site-title',
+			'container_inclusive' => false,
+			'render_callback' => 't2h_customize_partial_blogname',
+		) );
+		$wp_customize->selective_refresh->add_partial( 'blogdescription', array(
+			'selector' => '.site-description',
+			'container_inclusive' => false,
+			'render_callback' => 't2h_customize_partial_blogdescription',
+		) );
+	}
+}
+add_action( 'customize_register', 't2h_customize_register' );
+
+/**
+ * Render the site title for the selective refresh partial.
+ *
+ * @since Time to Hack 1.9
+ * @see t2h_customize_register()
+ *
+ * @return void
+ */
+function t2h_customize_partial_blogname() {
+	bloginfo( 'name' );
+}
+
+/**
+ * Render the site tagline for the selective refresh partial.
+ *
+ * @since Time to Hack 1.9
+ * @see t2h_customize_register()
+ *
+ * @return void
+ */
+function t2h_customize_partial_blogdescription() {
+	bloginfo( 'description' );
+}
