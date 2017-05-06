@@ -8,22 +8,18 @@ jQuery(document).ready(function(e){
 	jQuery('article .entry-content').each(function(i,e){
 		jQuery(e).html(jQuery(e).html().replace(/`(.*?)`/ig, '<code>$1</code>'));
 	})
-
-	hljs.configure({useBR: false});
-
+	if(hljs){
+		hljs.configure({useBR: false});
+	}
 	jQuery('pre, code.hljs').each(function(i, block) {
-		// if($(block).attr('class') != '' && $(block).attr('class').match('lang')){
-		// 	var x = $(block).attr('class').split(' ')
-		// }
 		if($(block).attr('remotepath')){
 			$.get($(block).attr('remotepath'), function(data){
 				$(block).text(data);
 			}).promise().done(function() {
-				hljs.highlightBlock( block );
+				hljs && hljs.highlightBlock( block );
 			});
 		} else {
-			hljs.highlightBlock(block);
+			hljs && hljs.highlightBlock(block);
 		}
 	});
-
 });
