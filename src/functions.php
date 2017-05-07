@@ -15,11 +15,9 @@ function t2h_post_nav(){
 		<ul  class="nav-links default-wp-page pager clearfix">
 			<li class="previous">
 				<?php previous_post_link( '%link', _x( '<span title="%title"><i class="fa fa-chevron-left"></i>  Previous Post</span>', 'Previous post', 't2h' ) ); ?>
-				<?php //previous_post_link( '%link', _x( '<i class="fa fa-chevron-left"></i>  %title', 'Previous post', 't2h' ) ); ?>
 			</li>
 			<li class="next">
 				<?php next_post_link( '%link', _x( '<span title="%title">Next Post  <i class="fa fa-chevron-right"></i></span>', 'Next post', 't2h' ) ); ?>
-				<?php //next_post_link( '%link', _x( '%title  <i class="fa fa-chevron-right"></i>', 'Next post', 't2h' ) ); ?>
 			</li>
 		</ul><!-- .nav-links -->
 	</nav><!-- .navigation -->	
@@ -37,23 +35,19 @@ if ( ! function_exists( 't2h_scripts_styles' ) ) :
 			wp_enqueue_script( 'comment-reply' );
 		
 		wp_enqueue_style( 'bootstrap', get_template_directory_uri() . '/css/bootstrap.min.css', array(), '3.0.3' );
-		wp_enqueue_style( 'font-awesome', "https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css", array(), '4.5.0' );
-		wp_enqueue_style( 'open-sans', 'https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,700,600', array(), '1.0' );
-		wp_enqueue_style( 'highlightjs', "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css", array(), '9.2.0' );
-		wp_enqueue_style( 'highlightjs-theme', "http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/monokai-sublime.min.css", array(), '9.2.0' );
-
+		wp_enqueue_style( 'font-awesome', "//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css", array(), '4.5.0' );
+		wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,700,600', array(), '1.0' );
+		wp_enqueue_style( 'font-awesome', "//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css", array(), '1.0' );
 		// Loads our main stylesheet.
 		wp_enqueue_style( 't2h-style', get_stylesheet_uri(), array('bootstrap'), '2013-07-18' );
 		
 
 		//Scripts
 		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'bootstrap', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js", array( 'jquery' ), '1.0', true );
+		wp_enqueue_script( 'bootstrap', "//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js", array( 'jquery' ), '1.0', true );
 		wp_enqueue_script( 'scroll', get_template_directory_uri() . '/js/jquery-scrolltofixed-min.js', array( 'jquery' ), '1.0', true );
-		wp_enqueue_script( 'highlightjs', "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js", array(), '9.2.0', true );
-		wp_enqueue_script( 't2h-script', get_template_directory_uri() . '/js/script.js', array( 'jquery', 'scroll', 'highlightjs' ), '1.0', true );
-
-		echo "<!-- Hello -->";
+		wp_enqueue_script( 'prettify', "//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.min.js", array(), '1.0', true );
+		wp_enqueue_script( 't2h-script', get_template_directory_uri() . '/js/script.js', array( 'jquery', 'scroll', 'prettify' ), '1.0', true );
 	}
 	add_action( 'wp_enqueue_scripts', 't2h_scripts_styles' );
 endif;
@@ -91,14 +85,27 @@ function has_code_sample(){
 	$code_link = $custom["code_link"][0];
 	$sample_link = $custom["sample_link"][0];
 	?>
-	<label>Has Code:</label>
-	<p><input type="radio" name="has_code" value="Yes"<?php if($has_code == 'Yes') echo 'checked="checked"'; ?> />&nbsp;Yes&nbsp;&nbsp;
-	<input type="radio" name="has_code" value="No" <?php if($has_code == 'No') echo 'checked="checked"'; ?>/>&nbsp;No</p>
-	<div><input type="text" name="code_link" value="<?php echo $code_link; ?>" style="display: block; width: 100%"></div><br/>
-	<label>Provides Sample/Download:</label>
-	<p><input type="radio" name="has_sample" value="Yes"<?php if($has_sample == 'Yes') echo 'checked="checked"'; ?> />&nbsp;Yes&nbsp;&nbsp;
-	<input type="radio" name="has_sample" value="No" <?php if($has_sample == 'No') echo 'checked="checked"'; ?>/>&nbsp;No</p>
-	<div><input type="text" name="sample_link" value="<?php echo $sample_link; ?>" style="display: block; width: 100%"></div>
+	<div>
+		<label>Has Code:</label>
+		<p>
+			<input type="radio" name="has_code" value="Yes"<?php if($has_code == 'Yes') echo 'checked="checked"'; ?> />&nbsp;Yes&nbsp;&nbsp;
+			<input type="radio" name="has_code" value="No" <?php if($has_code == 'No') echo 'checked="checked"'; ?>/>&nbsp;No
+		</p>
+		<div>
+			<input type="text" name="code_link" value="<?php echo $code_link; ?>" style="display: block; width: 100%" />
+		</div>
+		<br/>
+	</div>
+	<div>
+		<label>Provides Sample/Download:</label>
+		<p>
+			<input type="radio" name="has_sample" value="Yes"<?php if($has_sample == 'Yes') echo 'checked="checked"'; ?> />&nbsp;Yes&nbsp;&nbsp;
+			<input type="radio" name="has_sample" value="No" <?php if($has_sample == 'No') echo 'checked="checked"'; ?>/>&nbsp;No
+		</p>
+		<div>
+			<input type="text" name="sample_link" value="<?php echo $sample_link; ?>" style="display: block; width: 100%" />
+		</div>
+	</div>
 	<?php
 }
 
