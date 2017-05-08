@@ -462,6 +462,12 @@ code, kbd, pre, samp {
 
 /*******************************************/
 
+.post .prettyprint.inline {
+  padding: 4px 8px;
+  line-height: 1.2;
+  border-radius: 3px;
+}
+
 pre.prettyprint, code.prettyprint {
   color: white;
   background-color: #444;
